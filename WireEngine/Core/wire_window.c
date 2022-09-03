@@ -1,6 +1,42 @@
 #include "wire_window.h"
 
-void message_loop()
+#include <process.h>
+
+void initialize_d3d(wire_window* window)
+{
+	DXGI_SWAP_CHAIN_DESC scd;
+	
+	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
+
+	scd.BufferCount = 1;
+	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	scd.OutputWindow = window->assigned_window;
+	scd.SampleDesc.Count = 4;
+	scd.Windowed = 1;
+
+	D3D11CreateDeviceAndSwapChain(0,
+		D3D_DRIVER_TYPE_HARDWARE,
+		0,
+		0,
+		0,
+		0,
+		D3D11_SDK_VERSION,
+		&scd,
+		&window->dx_swapchain,
+		&window->d3d_dev,
+		0,
+		&window->d3d_devcontext);
+}
+
+void clear_d3d(wire_window* window)
+{
+	window->dx_swapchain->lpVtbl->Release(window->dx_swapchain);
+	window->d3d_dev->lpVtbl->Release(window->d3d_dev);
+	window->d3d_devcontext->lpVtbl->Release(window->d3d_devcontext);
+}
+
+void message_loop(void)
 {
 	MSG msg;
 
@@ -13,11 +49,11 @@ void message_loop()
 LRESULT wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	wire_window* window;
-	window = (wire_window*) GetWindowLongPtrA(hWnd, GWLP_USERDATA);
+	window = (wire_window*) (long long) GetWindowLongPtrA(hWnd, GWLP_USERDATA);
 	return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 }
 
-char* get_window_class_name(wire_window* window)
+char* get_window_class_name(const wire_window* window)
 {
 	size_t	wnd_name_len;
 	char*	wnd_class_name;
@@ -86,8 +122,9 @@ void create_window_i(wire_window* window)
 		window->assigned_window = 0;
 		return;
 	}
-
 	SetWindowLongPtrA(window->assigned_window, GWLP_USERDATA, (long long)window);
+
+	initialize_d3d(window);
 	
 	SetEvent(event);
 	message_loop();
@@ -101,7 +138,13 @@ void create_window(wire_window* window)
 	event = CreateEventA(0, 1, 0, window->name);
 	if (!event)
 		return;
-	_beginthread(create_window_i, 2000, window);
+	_beginthread((_beginthread_proc_type) create_window_i, 2000, window);
 	WaitForSingleObject(event, INFINITE);
 	CloseHandle(event);
+}
+
+void close_window(wire_window* window)
+{
+	clear_d3d(window);
+	SendMessageA(window->assigned_window, WM_CLOSE, 0, 0);
 }
