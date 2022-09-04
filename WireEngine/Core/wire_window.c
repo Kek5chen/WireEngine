@@ -5,7 +5,18 @@
 #include <d3dx10.h>
 
 #include "Internal/d3dsetup.h"
+#include "Internal/wire_window_internal.h"
 
+wire_window* new_wire_window(const char* name, const int width, const int height)
+{
+	wire_window_internal* window = malloc(sizeof(wire_window_internal));
+	if (!window)
+		return 0;
+	window->base.name = name;
+	window->base.width = width;
+	window->base.height = height;
+	return (wire_window*)window;
+}
 
 void message_loop(wire_window* window)
 {
@@ -63,7 +74,9 @@ void create_window_i(wire_window* window)
 	HANDLE		event;
 	WNDCLASSEXA wnd_class;
 	RECT		wnd_rect;
+	wire_window_internal* wnd;
 
+	wnd = (wire_window_internal*) window;
 	event = CreateEventA(0, 1, 0, window->name);
 	if (!event)
 		return;
@@ -84,11 +97,11 @@ void create_window_i(wire_window* window)
 
 	wnd_rect.left = 0;
 	wnd_rect.top = 0;
-	wnd_rect.right = window->width;
-	wnd_rect.bottom = window->height;
+	wnd_rect.right = wnd->base.width;
+	wnd_rect.bottom = wnd->base.height;
 	AdjustWindowRect(&wnd_rect, WS_OVERLAPPEDWINDOW, 0);
 
-	window->assigned_window = CreateWindowExA(0, 
+	wnd->assigned_window = CreateWindowExA(0, 
 		wnd_class.lpszClassName,
 		window->name, 
 		WS_OVERLAPPEDWINDOW, 
@@ -98,12 +111,12 @@ void create_window_i(wire_window* window)
 		0, 0,
 		GetCurrentProcess(), 
 		0);
-	if (!window->assigned_window || window->assigned_window == INVALID_HANDLE_VALUE) {
-		window->assigned_window = 0;
+	if (!wnd->assigned_window || wnd->assigned_window == INVALID_HANDLE_VALUE) {
+		wnd->assigned_window = 0;
 		return;
 	}
-	ShowWindow(window->assigned_window, SW_SHOW);
-	SetWindowLongPtrA(window->assigned_window, GWLP_USERDATA, (long long)window);
+	ShowWindow(wnd->assigned_window, SW_SHOW);
+	SetWindowLongPtrA(wnd->assigned_window, GWLP_USERDATA, (long long)wnd);
 	
 	SetEvent(event);
 	message_loop(window);
@@ -124,6 +137,9 @@ void create_window(wire_window* window)
 
 void close_window(wire_window* window)
 {
+	wire_window_internal* wnd;
+
+	wnd = (wire_window_internal*) window;
 	clear_d3d(window);
-	SendMessageA(window->assigned_window, WM_CLOSE, 0, 0);
+	SendMessageA(wnd->assigned_window, WM_CLOSE, 0, 0);
 }

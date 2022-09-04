@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Internal\wire_window_internal.h" />
     <ClInclude Include="Core\wire_window.h" />
     <ClInclude Include="Core\Internal\d3dsetup.h" />
   </ItemGroup>

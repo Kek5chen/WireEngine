@@ -1,7 +1,7 @@
 #include "d3dsetup.h"
 
-#pragma comment (lib, "d3dx11.lib")
-#pragma comment (lib, "d3dx10.lib")
+#include "wire_window_internal.h"
+
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "dxguid.lib")
 
@@ -12,7 +12,9 @@ void initialize_d3d(wire_window* window)
 	DXGI_SWAP_CHAIN_DESC scd;
 	ID3D11Texture2D* pBackBuffer;
 	HRESULT result;
+	wire_window_internal* wnd;
 
+	wnd = (wire_window_internal*) window;
 	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
 
 	scd.BufferCount = 1;
@@ -20,7 +22,7 @@ void initialize_d3d(wire_window* window)
 	scd.BufferDesc.Height = window->height;
 	scd.BufferDesc.Width = window->width;
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scd.OutputWindow = window->assigned_window;
+	scd.OutputWindow = wnd->assigned_window;
 	scd.SampleDesc.Count = 4;
 	scd.Windowed = 1;
 	scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
@@ -33,46 +35,51 @@ void initialize_d3d(wire_window* window)
 		0,
 		D3D11_SDK_VERSION,
 		&scd,
-		&window->dx_swapchain,
-		&window->d3d_dev,
+		&wnd->dx_swapchain,
+		&wnd->d3d_dev,
 		0,
-		&window->d3d_devcontext);
-	if (FAILED(result) || !window->dx_swapchain)
+		&wnd->d3d_devcontext);
+	if (FAILED(result) || !wnd->dx_swapchain)
 		return;
 
-	window->dx_swapchain->lpVtbl->GetBuffer(window->dx_swapchain, 0, &IID_ID3D11Texture2D, (LPVOID*)&pBackBuffer);
-	window->d3d_dev->lpVtbl->CreateRenderTargetView(window->d3d_dev, (ID3D11Resource*)pBackBuffer, 0, &window->d3d_backbuffer);
+	wnd->dx_swapchain->lpVtbl->GetBuffer(wnd->dx_swapchain, 0, &IID_ID3D11Texture2D, (LPVOID*)&pBackBuffer);
+	wnd->d3d_dev->lpVtbl->CreateRenderTargetView(wnd->d3d_dev, (ID3D11Resource*)pBackBuffer, 0, &wnd->d3d_backbuffer);
 	pBackBuffer->lpVtbl->Release(pBackBuffer);
-	window->d3d_devcontext->lpVtbl->OMSetRenderTargets(window->d3d_devcontext, 1, &window->d3d_backbuffer, 0);
+	wnd->d3d_devcontext->lpVtbl->OMSetRenderTargets(wnd->d3d_devcontext, 1, &wnd->d3d_backbuffer, 0);
 
 	D3D11_VIEWPORT viewport;
 	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
 
 	viewport.TopLeftX = 10;
 	viewport.TopLeftY = 10;
-	viewport.Width = (float)window->width;
-	viewport.Height = (float)window->height;
+	viewport.Width = (float)wnd->base.width;
+	viewport.Height = (float)wnd->base.height;
 
-	window->d3d_devcontext->lpVtbl->RSSetViewports(window->d3d_devcontext, 1, &viewport);
+	wnd->d3d_devcontext->lpVtbl->RSSetViewports(wnd->d3d_devcontext, 1, &viewport);
 }
 
 void render_frame(wire_window* window)
 {
 	D3DXCOLOR col;
+	wire_window_internal* wnd;
 
+	wnd = (wire_window_internal*) window;
 	col.r = .4f;
 	col.g = .4f;
 	col.b = .1f;
 	col.a = 1.0f;
-	window->d3d_devcontext->lpVtbl->ClearRenderTargetView(window->d3d_devcontext, window->d3d_backbuffer, (const FLOAT*)&col);
-	window->dx_swapchain->lpVtbl->Present(window->dx_swapchain, 0, 0);
+	wnd->d3d_devcontext->lpVtbl->ClearRenderTargetView(wnd->d3d_devcontext, wnd->d3d_backbuffer, (const FLOAT*)&col);
+	wnd->dx_swapchain->lpVtbl->Present(wnd->dx_swapchain, 0, 0);
 }
 
 void clear_d3d(wire_window* window)
 {
-	window->dx_swapchain->lpVtbl->SetFullscreenState(window->dx_swapchain, 0, 0);
-	window->dx_swapchain->lpVtbl->Release(window->dx_swapchain);
-	window->d3d_backbuffer->lpVtbl->Release(window->d3d_backbuffer);
-	window->d3d_dev->lpVtbl->Release(window->d3d_dev);
-	window->d3d_devcontext->lpVtbl->Release(window->d3d_devcontext);
+	wire_window_internal* wnd;
+	
+	wnd = (wire_window_internal*) window;
+	wnd->dx_swapchain->lpVtbl->SetFullscreenState(wnd->dx_swapchain, 0, 0);
+	wnd->dx_swapchain->lpVtbl->Release(wnd->dx_swapchain);
+	wnd->d3d_backbuffer->lpVtbl->Release(wnd->d3d_backbuffer);
+	wnd->d3d_dev->lpVtbl->Release(wnd->d3d_dev);
+	wnd->d3d_devcontext->lpVtbl->Release(wnd->d3d_devcontext);
 }
