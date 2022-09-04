@@ -42,10 +42,10 @@ void initialize_d3d(wire_window* window)
 	D3D11_VIEWPORT viewport;
 	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
 
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.Width = window->width;
-	viewport.Height = window->height;
+	viewport.TopLeftX = 10;
+	viewport.TopLeftY = 10;
+	viewport.Width = (float) window->width;
+	viewport.Height = (float) window->height;
 
 	window->d3d_devcontext->lpVtbl->RSSetViewports(window->d3d_devcontext, 1, &viewport);
 }
@@ -77,7 +77,7 @@ void message_loop(wire_window* window)
 	initialize_d3d(window);
 
 	while (1) {
-		if (GetMessageA(&msg, 0, 0, 0)) {
+		if (PeekMessageA(&msg, 0, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
 			DispatchMessageA(&msg);
 
@@ -86,7 +86,6 @@ void message_loop(wire_window* window)
 		}
 		render_frame(window);
 	}
-
 	clear_d3d(window);
 }
 
@@ -132,7 +131,7 @@ void create_window_i(wire_window* window)
 	if (!event)
 		return;
 	wnd_class.cbSize = sizeof(WNDCLASSEXA);
-	wnd_class.style = 0;
+	wnd_class.style = CS_HREDRAW | CS_VREDRAW;
 	wnd_class.lpfnWndProc = wnd_proc;
 	wnd_class.cbClsExtra = 0;
 	wnd_class.cbWndExtra = 0;
@@ -150,12 +149,12 @@ void create_window_i(wire_window* window)
 	wnd_rect.top = 0;
 	wnd_rect.right = window->width;
 	wnd_rect.bottom = window->height;
-	AdjustWindowRectEx(&wnd_rect, WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0);
+	AdjustWindowRect(&wnd_rect, WS_OVERLAPPEDWINDOW, 0);
 
 	window->assigned_window = CreateWindowExA(0, 
 		wnd_class.lpszClassName,
 		window->name, 
-		WS_OVERLAPPEDWINDOW | WS_VISIBLE, 
+		WS_OVERLAPPEDWINDOW, 
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		wnd_rect.right - wnd_rect.left,
 		wnd_rect.bottom - wnd_rect.top,
@@ -166,6 +165,7 @@ void create_window_i(wire_window* window)
 		window->assigned_window = 0;
 		return;
 	}
+	ShowWindow(window->assigned_window, SW_SHOW);
 	SetWindowLongPtrA(window->assigned_window, GWLP_USERDATA, (long long)window);
 	
 	SetEvent(event);
