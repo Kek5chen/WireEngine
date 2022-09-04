@@ -20,9 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\wire_window.h" />
+    <ClInclude Include="Core\Internal\d3dsetup.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\wire_window.c" />
+    <ClCompile Include="Core\Internal\d3dsetup.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
