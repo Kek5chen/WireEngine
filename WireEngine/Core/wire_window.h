@@ -1,9 +1,5 @@
 #pragma once
 
-
-#include <Windows.h>
-#include <d3d11.h>
-
 typedef struct wire_window_t {
 	const char* name;
 	int			width;

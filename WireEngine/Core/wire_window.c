@@ -1,8 +1,6 @@
 #include "wire_window.h"
 
 #include <process.h>
-#include <d3dx11.h>
-#include <d3dx10.h>
 
 #include "Internal/d3dsetup.h"
 #include "Internal/wire_window_internal.h"
