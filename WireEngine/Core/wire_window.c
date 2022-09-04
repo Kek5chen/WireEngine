@@ -14,10 +14,13 @@ void initialize_d3d(wire_window* window)
 
 	scd.BufferCount = 1;
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	scd.BufferDesc.Height = window->height;
+	scd.BufferDesc.Width = window->width;
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	scd.OutputWindow = window->assigned_window;
 	scd.SampleDesc.Count = 4;
 	scd.Windowed = 1;
+	scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	result = D3D11CreateDeviceAndSwapChain(0,
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -64,6 +67,7 @@ void render_frame(wire_window* window)
 
 void clear_d3d(wire_window* window)
 {
+	window->dx_swapchain->lpVtbl->SetFullscreenState(window->dx_swapchain, 0, 0);
 	window->dx_swapchain->lpVtbl->Release(window->dx_swapchain);
 	window->d3d_backbuffer->lpVtbl->Release(window->d3d_backbuffer);
 	window->d3d_dev->lpVtbl->Release(window->d3d_dev);
