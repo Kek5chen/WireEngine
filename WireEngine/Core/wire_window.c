@@ -56,7 +56,7 @@ char* get_window_class_name(const wire_window* window)
 		return 0;
 	strcpy_s(wnd_class_name + 5, wnd_name_len + 1, window->name);
 	_strupr_s(wnd_class_name + 5, wnd_name_len + 1);
-	memcpy(wnd_class_name, "WIRE_", 5);
+	memcpy_s(wnd_class_name, wnd_name_len + 6, "WIRE_", 5);
 	c = strchr(wnd_class_name, ' ');
 	while (c) {
 		*c = '_';
