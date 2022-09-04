@@ -38,17 +38,17 @@ void initialize_d3d(wire_window* window)
 		0,
 		D3D11_SDK_VERSION,
 		&scd,
-		&wnd->dx_swapchain,
-		&wnd->d3d_dev,
+		&wnd->swapchain,
+		&wnd->dev,
 		0,
-		&wnd->d3d_devcontext);
-	if (FAILED(result) || !wnd->dx_swapchain)
+		&wnd->devcontext);
+	if (FAILED(result) || !wnd->swapchain)
 		return;
 
-	wnd->dx_swapchain->lpVtbl->GetBuffer(wnd->dx_swapchain, 0, &IID_ID3D11Texture2D, (LPVOID*)&pBackBuffer);
-	wnd->d3d_dev->lpVtbl->CreateRenderTargetView(wnd->d3d_dev, (ID3D11Resource*)pBackBuffer, 0, &wnd->d3d_backbuffer);
+	wnd->swapchain->lpVtbl->GetBuffer(wnd->swapchain, 0, &IID_ID3D11Texture2D, (LPVOID*)&pBackBuffer);
+	wnd->dev->lpVtbl->CreateRenderTargetView(wnd->dev, (ID3D11Resource*)pBackBuffer, 0, &wnd->backbuffer);
 	pBackBuffer->lpVtbl->Release(pBackBuffer);
-	wnd->d3d_devcontext->lpVtbl->OMSetRenderTargets(wnd->d3d_devcontext, 1, &wnd->d3d_backbuffer, 0);
+	wnd->devcontext->lpVtbl->OMSetRenderTargets(wnd->devcontext, 1, &wnd->backbuffer, 0);
 
 	D3D11_VIEWPORT viewport;
 	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
@@ -58,7 +58,7 @@ void initialize_d3d(wire_window* window)
 	viewport.Width = (float)wnd->base.width;
 	viewport.Height = (float)wnd->base.height;
 
-	wnd->d3d_devcontext->lpVtbl->RSSetViewports(wnd->d3d_devcontext, 1, &viewport);
+	wnd->devcontext->lpVtbl->RSSetViewports(wnd->devcontext, 1, &viewport);
 }
 
 void render_frame(wire_window* window)
@@ -71,8 +71,8 @@ void render_frame(wire_window* window)
 	col.g = .4f;
 	col.b = .1f;
 	col.a = 1.0f;
-	wnd->d3d_devcontext->lpVtbl->ClearRenderTargetView(wnd->d3d_devcontext, wnd->d3d_backbuffer, (const FLOAT*)&col);
-	wnd->dx_swapchain->lpVtbl->Present(wnd->dx_swapchain, 0, 0);
+	wnd->devcontext->lpVtbl->ClearRenderTargetView(wnd->devcontext, wnd->backbuffer, (const FLOAT*)&col);
+	wnd->swapchain->lpVtbl->Present(wnd->swapchain, 0, 0);
 }
 
 void clear_d3d(wire_window* window)
@@ -80,9 +80,12 @@ void clear_d3d(wire_window* window)
 	wire_window_internal* wnd;
 	
 	wnd = (wire_window_internal*) window;
-	wnd->dx_swapchain->lpVtbl->SetFullscreenState(wnd->dx_swapchain, 0, 0);
-	wnd->dx_swapchain->lpVtbl->Release(wnd->dx_swapchain);
+	wnd->swapchain->lpVtbl->SetFullscreenState(wnd->swapchain, 0, 0);
+
 	wnd->d3d_backbuffer->lpVtbl->Release(wnd->d3d_backbuffer);
 	wnd->d3d_dev->lpVtbl->Release(wnd->d3d_dev);
-	wnd->d3d_devcontext->lpVtbl->Release(wnd->d3d_devcontext);
+	wnd->swapchain->lpVtbl->Release(wnd->swapchain);
+	wnd->backbuffer->lpVtbl->Release(wnd->backbuffer);
+	wnd->dev->lpVtbl->Release(wnd->dev);
+	wnd->devcontext->lpVtbl->Release(wnd->devcontext);
 }
