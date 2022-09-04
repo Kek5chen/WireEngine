@@ -14,10 +14,12 @@ int main(int argc, char** argv)
 	create_window(window);
 
 	// Main Loop
-	while (!GetAsyncKeyState(VK_END));
+	while (!GetAsyncKeyState(VK_END))
+		Sleep(100);
 	close_window(window);
 
-	while (GetAsyncKeyState(VK_END));
+	while (GetAsyncKeyState(VK_END))
+		Sleep(100);
 	// Cleanup
 
 	// Exit
