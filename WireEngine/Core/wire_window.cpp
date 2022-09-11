@@ -7,13 +7,13 @@
 
 wire_window* new_wire_window(const char* name, const int width, const int height)
 {
-	wire_window_internal* window = malloc(sizeof(wire_window_internal));
+	auto window = new wire_window_internal();
 	if (!window)
 		return 0;
-	window->base.name = name;
-	window->base.width = width;
-	window->base.height = height;
-	return (wire_window*)window;
+	window->name = name;
+	window->width = width;
+	window->height = height;
+	return window;
 }
 
 void message_loop(wire_window* window)
@@ -22,7 +22,7 @@ void message_loop(wire_window* window)
 
 	initialize_d3d(window);
 
-	while (1) {
+	while (true) {
 		if (PeekMessageA(&msg, 0, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
 			DispatchMessageA(&msg);
@@ -38,7 +38,7 @@ void message_loop(wire_window* window)
 LRESULT wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	wire_window* window;
-	window = (wire_window*) (long long) GetWindowLongPtrA(hWnd, GWLP_USERDATA);
+	window = (wire_window*) GetWindowLongPtrA(hWnd, GWLP_USERDATA);
 	return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 }
 
@@ -51,12 +51,12 @@ char* get_window_class_name(const wire_window* window)
 	if (!window || !*window->name)
 		return 0;
 	wnd_name_len = strlen(window->name);
-	wnd_class_name = malloc(wnd_name_len + 6);
+	wnd_class_name = new char[wnd_name_len + 6];
 	if (!wnd_class_name)
 		return 0;
 	strcpy_s(wnd_class_name + 5, wnd_name_len + 1, window->name);
 	_strupr_s(wnd_class_name + 5, wnd_name_len + 1);
-	memcpy_s(wnd_class_name, wnd_name_len + 6, "WIRE_", 5);
+	memcpy_s(wnd_class_name, wnd_name_len + 6, "WIRE_", 5);  // NOLINT(bugprone-not-null-terminated-result) <- we want this since we have text afterwards
 	c = strchr(wnd_class_name, ' ');
 	while (c) {
 		*c = '_';
@@ -83,7 +83,7 @@ void create_window_i(wire_window* window)
 	wnd_class.lpfnWndProc = wnd_proc;
 	wnd_class.cbClsExtra = 0;
 	wnd_class.cbWndExtra = 0;
-	wnd_class.hInstance = GetCurrentProcess();
+	wnd_class.hInstance = (HINSTANCE) GetCurrentProcess();
 	wnd_class.hIcon = 0;
 	wnd_class.hCursor = 0;
 	wnd_class.hbrBackground = 0;
@@ -95,8 +95,8 @@ void create_window_i(wire_window* window)
 
 	wnd_rect.left = 0;
 	wnd_rect.top = 0;
-	wnd_rect.right = wnd->base.width;
-	wnd_rect.bottom = wnd->base.height;
+	wnd_rect.right = wnd->width;
+	wnd_rect.bottom = wnd->height;
 	AdjustWindowRect(&wnd_rect, WS_OVERLAPPEDWINDOW, 0);
 
 	wnd->assigned_window = CreateWindowExA(0, 
@@ -107,7 +107,7 @@ void create_window_i(wire_window* window)
 		wnd_rect.right - wnd_rect.left,
 		wnd_rect.bottom - wnd_rect.top,
 		0, 0,
-		GetCurrentProcess(), 
+		(HINSTANCE) GetCurrentProcess(), 
 		0);
 	if (!wnd->assigned_window || wnd->assigned_window == INVALID_HANDLE_VALUE) {
 		wnd->assigned_window = 0;

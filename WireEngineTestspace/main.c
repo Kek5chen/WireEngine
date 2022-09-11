@@ -5,7 +5,7 @@
 int main(int argc, char** argv)
 {
 	// Window Creation
-	wire_window* window = malloc(sizeof(wire_window));
+	auto window = new wire_window();
 	if (!window)
 		return 1;
 	window->height = 1080;

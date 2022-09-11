@@ -4,9 +4,10 @@
     <ClInclude Include="Core\wire_window.h" />
     <ClInclude Include="Core\Internal\d3dsetup.h" />
     <ClInclude Include="Core\Internal\wire_window_internal.h" />
+    <ClInclude Include="Core\Internal\renderobjects.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\wire_window.c" />
-    <ClCompile Include="Core\Internal\d3dsetup.c" />
+    <ClCompile Include="Core\wire_window.cpp" />
+    <ClCompile Include="Core\Internal\d3dsetup.cpp" />
   </ItemGroup>
 </Project>
