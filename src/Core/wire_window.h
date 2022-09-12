@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WIRE_WINDOW_H
+#define WIRE_WINDOW_H
 
 #include "Internal/wire_window_internal.h"
 
@@ -21,3 +22,4 @@ public:
 	bool	should_close();
 };
 
+#endif //WIRE_WINDOW_H
