@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Daten\GitHub\WireEngine\WireEngine\Includes\glfw-3.3.8\build\CMakeFiles\6b6f05c8556d188c213ea977bace6c3a\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{2C833012-6635-3A0F-BEFF-B425B4A3B652}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
