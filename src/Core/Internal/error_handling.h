@@ -1,6 +1,6 @@
 #pragma once
 
-namespace log {
+namespace logger {
 	void throw_critical_error(int err_id, const char* message);
 	void throw_warning(int err_id, const char* message);
 	void throw_error(int err_id, const char* message);
