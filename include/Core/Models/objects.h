@@ -21,4 +21,10 @@ struct matrix4
 	float m[4][4];
 };
 
+struct vertex
+{
+	vector3 position;
+	vector3 color;
+};
+
 #endif //OBJECTS_H
