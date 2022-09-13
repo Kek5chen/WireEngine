@@ -1,8 +1,5 @@
 #include "wire_window.h"
 
-#include <cstdio>
-#include <GLFW/glfw3.h>
-
 #include "Internal/error_handling.h"
 
 int wire_window::get_key(int key)
