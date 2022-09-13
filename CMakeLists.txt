@@ -37,3 +37,9 @@ target_link_libraries(WireEngine PUBLIC glfw glew_s)
 target_include_directories(WireEngine
         PUBLIC dependencies/glfw-3.3.8/include
         dependencies/glew-2.2.0/include)
+
+# if release build, static link libraries
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_link_libraries(WireEngine PUBLIC -static)
+endif()
