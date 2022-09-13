@@ -4,7 +4,7 @@
 
 #include <GLFW/glfw3.h>
 
-namespace log {
+namespace logger {
 	void throw_critical_error(int err_id, const char* message)
 	{
 		printf("[CRIT:%4i] %s", err_id, message);

@@ -13,7 +13,7 @@ int wire_window::get_key(int key)
 bool wire_window::create_window()
 {
 	if (!glfwInit()) {
-		log::throw_critical_error(0, "Could not initialize GLFW");
+		logger::throw_critical_error(0, "Could not initialize GLFW");
 		return false;
 	}
 	glfwWindowHint(GLFW_SAMPLES, 4);
@@ -34,7 +34,7 @@ bool wire_window::create_window()
 	
 	this->gl_window = glfwCreateWindow(this->width, this->height, this->name, monitor, 0);
 	if (!this->gl_window) {
-		log::throw_critical_error(1, "Could not create new OpenGL Window");
+		logger::throw_critical_error(1, "Could not create new OpenGL Window");
 		return false;
 	}
 	glfwMakeContextCurrent(this->gl_window);
