@@ -6,6 +6,7 @@
 #include "GL/glew.h"
 #include "wire_shader_manager.h"
 #include "wire_window.h"
+#include "Models/objects.h"
 
 class wire_window;
 
@@ -17,7 +18,7 @@ public:
 
 	wire_renderer(wire_window *parent);
 	void initialize();
-	void draw_triangle();
+	void draw_triangle(vertex v1, vertex v2, vertex v3);
 	void next_frame();
 	void terminate();
 	~wire_renderer();
