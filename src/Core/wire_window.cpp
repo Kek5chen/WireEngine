@@ -1,6 +1,4 @@
-#include <cstdio>
 #include "wire_window.h"
-#include "wire_renderer.h"
 
 #include "Internal/error_handling.h"
 
@@ -72,11 +70,6 @@ int wire_window::create_window() {
 	renderer->initialize();
 
 	return 0;
-}
-
-void wire_window::next_frame() {
-	glfwSwapBuffers(this->gl_window);
-	glfwPollEvents();
 }
 
 void wire_window::close_window() {

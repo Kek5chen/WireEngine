@@ -1,6 +1,7 @@
 #ifndef WIRE_WINDOW_H
 #define WIRE_WINDOW_H
 
+#include "wire_renderer.h"
 #include "Internal/wire_window_internal.h"
 
 #define WM_PRIMARY (-1)
@@ -23,7 +24,6 @@ public:
 	~wire_window();
 	int		get_key(int key);
 	int		create_window();
-	void	next_frame();
 	void	close_window();
 	bool	should_close();
 };
