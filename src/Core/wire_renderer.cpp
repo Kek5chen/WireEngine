@@ -1,6 +1,6 @@
 #include "wire_renderer.h"
-#include "Shaders/vertex_shader.h"
-#include "Shaders/fragment_shader.h"
+#include "../Shaders/vertex_shader.h"
+#include "../Shaders/fragment_shader.h"
 #include "Models/objects.h"
 
 wire_renderer::wire_renderer(wire_window *parent) {
