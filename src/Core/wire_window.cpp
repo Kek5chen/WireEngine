@@ -2,6 +2,14 @@
 
 #include "Internal/error_handling.h"
 
+wire_window::wire_window() {
+	this->name = "WireEngine Window";
+	this->width = 1280;
+	this->height = 720;
+	this->fullscreen_monitor = WM_WINDOWED;
+	this->renderer = new wire_renderer(this);
+}
+
 // calls base constructor first
 wire_window::wire_window(const char *name, int width, int height, int fullscreen_monitor) : wire_window() {
 	if (name)
@@ -11,18 +19,6 @@ wire_window::wire_window(const char *name, int width, int height, int fullscreen
 	if (this->height)
 		this->height = height;
 	this->fullscreen_monitor = fullscreen_monitor;
-}
-
-wire_window::wire_window() {
-	this->name = "WireEngine Window";
-	this->width = 1280;
-	this->height = 720;
-	this->fullscreen_monitor = WM_WINDOWED;
-	this->renderer = new wire_renderer(this);
-}
-
-wire_window::~wire_window() {
-	delete this->renderer;
 }
 
 int wire_window::get_key(int key) {
@@ -74,9 +70,14 @@ int wire_window::create_window() {
 
 void wire_window::close_window() {
 	renderer->terminate();
-	glfwTerminate();
+	delete this->renderer;
 }
 
 bool wire_window::should_close() {
 	return glfwWindowShouldClose(this->gl_window);
+}
+
+
+wire_window::~wire_window() {
+	glfwTerminate();
 }

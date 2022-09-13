@@ -46,7 +46,6 @@ void wire_renderer::next_frame() {
 
 void wire_renderer::terminate() {
 	glDeleteBuffers(1, &triangle_buffer);
-	delete shader_manager;
 }
 
 wire_renderer::~wire_renderer() {
