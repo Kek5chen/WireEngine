@@ -81,3 +81,7 @@ bool wire_window::should_close() {
 wire_window::~wire_window() {
 	glfwTerminate();
 }
+
+wire_renderer *wire_window::get_renderer() {
+	return this->renderer;
+}
