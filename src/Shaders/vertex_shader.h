@@ -5,12 +5,18 @@ const char* vertex_shader_source = R"(
 #version 330 core
 
 // Input vertex data, different for all executions of this shader.
-layout(location = 0) in vec3 vertexPosition_modelspace;
+layout(location = 0) in vec3 pos;
+layout(location = 1) in vec3 col;
 
-void main(){
+out vec3 color;
 
-    gl_Position.xyz = vertexPosition_modelspace;
-    gl_Position.w = 1.0;
+void main() {
+
+	// Output position of the vertex, in clip space : MVP * position
+	gl_Position = vec4(pos, 1.0);
+
+	// Output color of the vertex, in clip space : MVP * position
+	color = col;
 
 }
 )";
