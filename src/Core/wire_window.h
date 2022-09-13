@@ -8,15 +8,21 @@
 
 #define WK_ESCAPE GLFW_KEY_ESCAPE
 
+class wire_renderer;
+
 class wire_window : private wire_window_internal {
 public:
-	const char*	name;
-	int			width;
-	int			height;
-	int			fullscreen_monitor;
+	const char*		name;
+	int				width;
+	int				height;
+	int				fullscreen_monitor;
+	wire_renderer* 	renderer;
 
+	wire_window(const char* name, int width, int height, int fullscreen_monitor = WM_WINDOWED);
+	wire_window();
+	~wire_window();
 	int		get_key(int key);
-	bool	create_window();
+	int		create_window();
 	void	next_frame();
 	void	close_window();
 	bool	should_close();

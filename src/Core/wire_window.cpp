@@ -1,17 +1,40 @@
+#include <cstdio>
 #include "wire_window.h"
+#include "wire_renderer.h"
 
 #include "Internal/error_handling.h"
 
-int wire_window::get_key(int key)
-{
+// calls base constructor first
+wire_window::wire_window(const char *name, int width, int height, int fullscreen_monitor) : wire_window() {
+	if (name)
+		this->name = name;
+	if (this->width)
+		this->width = width;
+	if (this->height)
+		this->height = height;
+	this->fullscreen_monitor = fullscreen_monitor;
+}
+
+wire_window::wire_window() {
+	this->name = "WireEngine Window";
+	this->width = 1280;
+	this->height = 720;
+	this->fullscreen_monitor = WM_WINDOWED;
+	this->renderer = new wire_renderer(this);
+}
+
+wire_window::~wire_window() {
+	delete this->renderer;
+}
+
+int wire_window::get_key(int key) {
 	return glfwGetKey(this->gl_window, key);
 }
 
-bool wire_window::create_window()
-{
+int wire_window::create_window() {
 	if (!glfwInit()) {
-		logger::throw_critical_error(0, "Could not initialize GLFW");
-		return false;
+		logger::throw_critical_error(ERR_GLFW_INIT, "Could not initialize GLFW");
+		return 1;
 	}
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_RESIZABLE, false);
@@ -20,7 +43,7 @@ bool wire_window::create_window()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWmonitor* monitor;
+	GLFWmonitor *monitor;
 	int monitor_count;
 	if (!this->fullscreen_monitor)
 		monitor = 0;
@@ -28,31 +51,39 @@ bool wire_window::create_window()
 		monitor = glfwGetPrimaryMonitor();
 	else
 		monitor = glfwGetMonitors(&monitor_count)[this->fullscreen_monitor];
-	
+
 	this->gl_window = glfwCreateWindow(this->width, this->height, this->name, monitor, 0);
 	if (!this->gl_window) {
-		logger::throw_critical_error(1, "Could not create new OpenGL Window");
-		return false;
+		logger::throw_critical_error(ERR_CREATE_OGL_WINDOW, "Could not create new OpenGL Window");
+		return 2;
 	}
 	glfwMakeContextCurrent(this->gl_window);
 
+	glewExperimental = true;
+	if (glewInit() != GLEW_OK) {
+		logger::throw_critical_error(ERR_GLEW_INIT, "Could not initialize GLEW");
+		return 3;
+	}
+
 	glfwSetInputMode(this->gl_window, GLFW_STICKY_KEYS, true);
 
-	return true;
+	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+
+	renderer->initialize();
+
+	return 0;
 }
 
-void wire_window::next_frame()
-{
+void wire_window::next_frame() {
 	glfwSwapBuffers(this->gl_window);
 	glfwPollEvents();
 }
 
-void wire_window::close_window()
-{
+void wire_window::close_window() {
+	renderer->terminate();
 	glfwTerminate();
 }
 
-bool wire_window::should_close()
-{
+bool wire_window::should_close() {
 	return glfwWindowShouldClose(this->gl_window);
 }
