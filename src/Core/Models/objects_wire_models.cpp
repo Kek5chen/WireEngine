@@ -45,12 +45,12 @@ wire_square::wire_square(vertex v1, vertex v2, vertex v3, vertex v4)
 	: wire_model_base(0, 0)
 {
 	glGenBuffers(1, &vertex_buffer);
-	this->v[0] = v1;
-	this->v[1] = v2;
-	this->v[2] = v3;
-	this->v[3] = v4;
+	this->v[0] = v1; // reorder array hack to make two offset triangles, first 0,1,2; second at 1,2,3
+	this->v[1] = v4;
+	this->v[2] = v2;
+	this->v[3] = v3;
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * 4, v, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * 6, v, GL_STATIC_DRAW);
 }
 
 void wire_square::draw()
@@ -61,5 +61,6 @@ void wire_square::draw()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *) 0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *) (sizeof(vector3)));
-	glDrawArrays(GL_QUADS, 0, 4);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 1, 3);
 }
