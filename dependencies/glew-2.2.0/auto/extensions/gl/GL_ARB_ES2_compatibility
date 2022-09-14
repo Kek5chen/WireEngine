@@ -22,5 +22,5 @@ GL_ARB_ES2_compatibility
 	void glDepthRangef (GLclampf n, GLclampf f)
 	void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint *precision)
 	void glReleaseShaderCompiler (void)
-	void glShaderBinary (GLsizei count, const GLuint* shaders, GLenum binaryformat, const void*binary, GLsizei length)
+	void glShaderBinary (GLsizei count, const GLuint* unlinked_shaders, GLenum binaryformat, const void*binary, GLsizei length)
 	typedef int GLfixed

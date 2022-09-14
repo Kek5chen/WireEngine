@@ -103,7 +103,7 @@ http://www.opengl.org/documentation/specs/version2.0/glspec20.pdf
 	void glEnableVertexAttribArray (GLuint index)
 	void glGetActiveAttrib (GLuint program, GLuint index, GLsizei maxLength, GLsizei* length, GLint* size, GLenum* type, GLchar* name)
 	void glGetActiveUniform (GLuint program, GLuint index, GLsizei maxLength, GLsizei* length, GLint* size, GLenum* type, GLchar* name)
-	void glGetAttachedShaders (GLuint program, GLsizei maxCount, GLsizei* count, GLuint* shaders)
+	void glGetAttachedShaders (GLuint program, GLsizei maxCount, GLsizei* count, GLuint* unlinked_shaders)
 	GLint glGetAttribLocation (GLuint program, const GLchar* name)
 	void glGetProgramiv (GLuint program, GLenum pname, GLint* param)
 	void glGetProgramInfoLog (GLuint program, GLsizei bufSize, GLsizei* length, GLchar* infoLog)
