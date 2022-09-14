@@ -50,4 +50,13 @@ public:
 	void draw();
 };
 
+class wire_square : public wire_model_base
+{
+private:
+	vertex v[4];
+public:
+	wire_square(vertex v1, vertex v2, vertex v3, vertex v4);
+	void draw();
+};
+
 #endif //OBJECTS_H
