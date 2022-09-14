@@ -3,7 +3,7 @@
 #include "Internal/error_handling.h"
 
 wire_window::wire_window() {
-	this->name = "WireEngine Window";
+	this->title = "WireEngine Window";
 	this->width = 1280;
 	this->height = 720;
 	this->fullscreen_monitor = WM_WINDOWED;
@@ -13,7 +13,7 @@ wire_window::wire_window() {
 // calls base constructor first
 wire_window::wire_window(const char *name, int width, int height, int fullscreen_monitor) : wire_window() {
 	if (name)
-		this->name = name;
+		this->title = name;
 	if (this->width)
 		this->width = width;
 	if (this->height)
@@ -46,7 +46,7 @@ int wire_window::create_window() {
 	else
 		monitor = glfwGetMonitors(&monitor_count)[this->fullscreen_monitor];
 
-	this->gl_window = glfwCreateWindow(this->width, this->height, this->name, monitor, 0);
+	this->gl_window = glfwCreateWindow(this->width, this->height, this->title, monitor, 0);
 	if (!this->gl_window) {
 		logger::throw_critical_error(ERR_CREATE_OGL_WINDOW, "Could not create new OpenGL Window");
 		return 2;
@@ -84,4 +84,10 @@ wire_window::~wire_window() {
 
 wire_renderer *wire_window::get_renderer() {
 	return this->renderer;
+}
+
+void wire_window::change_title(const char* new_title)
+{
+	this->title = new_title;
+	glfwSetWindowTitle(this->gl_window, this->title);
 }
