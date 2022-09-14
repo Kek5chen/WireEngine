@@ -68,18 +68,13 @@ int wire_window::create_window() {
 	return 0;
 }
 
-void wire_window::close_window() {
-	renderer->terminate();
-	delete this->renderer;
-}
-
 bool wire_window::should_close() {
 	return glfwWindowShouldClose(this->gl_window);
 }
 
 
 wire_window::~wire_window() {
-	glfwTerminate();
+	delete this->renderer;
 }
 
 wire_renderer *wire_window::get_renderer() {
@@ -90,4 +85,9 @@ void wire_window::change_title(const char* new_title)
 {
 	this->title = new_title;
 	glfwSetWindowTitle(this->gl_window, this->title);
+}
+
+wire_window_internal::~wire_window_internal() {
+	glfwDestroyWindow(this->gl_window);
+	glfwTerminate();
 }

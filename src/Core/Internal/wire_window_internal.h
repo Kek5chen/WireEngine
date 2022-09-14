@@ -6,6 +6,7 @@
 
 struct wire_window_internal {
 	GLFWwindow* gl_window;
+	virtual ~wire_window_internal();
 };
 
 #endif //WIRE_WINDOW_INTERNAL_H

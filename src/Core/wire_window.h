@@ -26,7 +26,6 @@ public:
 	int				create_window();
 	void 			change_title(const char* title);
 	wire_renderer* 	get_renderer();
-	void			close_window();
 	bool			should_close();
 	~wire_window();
 };

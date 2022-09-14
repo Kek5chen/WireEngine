@@ -21,7 +21,6 @@ public:
 	void initialize();
 	void add_model(wire_model_base *model);
 	void next_frame();
-	void terminate();
 	~wire_renderer();
 };
 

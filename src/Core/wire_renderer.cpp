@@ -31,13 +31,8 @@ void wire_renderer::next_frame() {
 	glfwPollEvents();
 }
 
-void wire_renderer::terminate() {
-	for(auto model : models)
-		delete model;
-}
-
 wire_renderer::~wire_renderer() {
-	terminate();
+	delete shader_manager;
 }
 
 void wire_renderer::add_model(wire_model_base* model)
