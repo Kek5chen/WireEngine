@@ -1,4 +1,3 @@
-
 #include "wire_shader_manager.h"
 #include "Internal/error_handling.h"
 #include <algorithm>
@@ -14,17 +13,17 @@ bool wire_shader::compile() {
 	glCompileShader(this->id);
 	glGetShaderiv(this->id, GL_COMPILE_STATUS, &this->status);
 
-	if (this->status == GL_FALSE) {
-		GLint log_length;
-		glGetShaderiv(this->id, GL_INFO_LOG_LENGTH, &log_length);
-		std::vector<GLchar> error_log(log_length);
-		glGetShaderInfoLog(this->id, log_length, &log_length, &error_log[0]);
-		logger::throw_error(ERR_SHADER_COMPILE, &error_log[0]);
-		this->destroy();
-		return false;
+	if (this->status) {
+		logger::throw_info("Shader compiled successfully");
+		return true;
 	}
-	logger::throw_info("Shader compiled successfully");
-	return true;
+	GLint log_length;
+	glGetShaderiv(this->id, GL_INFO_LOG_LENGTH, &log_length);
+	std::vector<GLchar> error_log(log_length);
+	glGetShaderInfoLog(this->id, log_length, &log_length, &error_log[0]);
+	logger::throw_error(ERR_SHADER_COMPILE, &error_log[0]);
+	this->destroy();
+	return false;
 }
 
 void wire_shader::destroy() {
@@ -35,28 +34,21 @@ wire_shader::~wire_shader() {
 	this->destroy();
 }
 
-bool wire_shader_manager::add_shader(const char *shader_source, GLenum type) {
+
+
+
+bool wire_shader_manager::add_shader(const char *shader_source, GLenum type, GLuint program) {
 	if (!shader_source)
 		return false;
 
 	wire_shader* shader = new wire_shader(type, shader_source);
-	if (!shader->compile()) {
-		delete shader;
+	if (!shader->compile())
 		return false;
-	}
-	shader->linked = false;
 	glAttachShader(program, shader->id);
-	shaders.push_back(shader);
 	return true;
 }
 
-void wire_shader_manager::clean_shaders() {
-	for (auto shader : shaders)
-		delete shader;
-	shaders.clear();
-}
-
-bool wire_shader_manager::relink() {
+bool wire_shader_manager::relink(GLuint program) {
 	glLinkProgram(program);
 	GLint status;
 	glGetProgramiv(program, GL_LINK_STATUS, &status);
@@ -70,22 +62,34 @@ bool wire_shader_manager::relink() {
 		terminate();
 		return false;
 	}
-	for (wire_shader* shader : shaders) {
-		if (!shader->linked) {
-			glDetachShader(program, shader->id);
-			shader->linked = true;
-			logger::throw_info("Successfully linked shader.");
-		}
-	}
+		logger::throw_info("Successfully linked shader.");
 	return true;
 }
 
 void wire_shader_manager::terminate() {
-	clean_shaders();
 	glDeleteVertexArrays(1, &vertex_array_id);
-	glDeleteProgram(program);
+	for (auto program : programs)
+		glDeleteProgram(program);
 }
 
 wire_shader_manager::~wire_shader_manager() {
 	terminate();
+}
+
+GLuint wire_shader_manager::get_default_program()
+{
+	return programs[0];
+}
+
+bool wire_shader_manager::add_program(const char *vertex_shader_source, const char *fragment_shader_source)
+{
+	GLuint program = glCreateProgram();
+	if (!add_shader(vertex_shader_source, GL_VERTEX_SHADER, program))
+		return false;
+	if (!add_shader(fragment_shader_source, GL_FRAGMENT_SHADER, program))
+		return false;
+	if (!relink(program))
+		return false;
+	programs.push_back(program);
+	return true;
 }

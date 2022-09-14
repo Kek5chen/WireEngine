@@ -9,7 +9,6 @@ struct wire_shader {
 	GLenum type;
 	const char* source;
 	GLint status;
-	bool linked;
 
 	wire_shader(GLenum type, const char* shader_source);
 	bool compile();
@@ -18,15 +17,16 @@ struct wire_shader {
 };
 
 class wire_shader_manager {
+private:
+	std::vector<GLuint> programs;
 public:
-	std::vector<wire_shader*> shaders;
 	GLuint vertex_array_id;
-	GLuint program;
 	GLuint vbo;
 
-	bool add_shader(const char* shader_source, GLenum type);
-	void clean_shaders();
-	bool relink();
+	bool add_shader(const char* shader_source, GLenum type, GLuint program);
+	bool add_program(const char* vertex_shader_source, const char* fragment_shader_source);
+	GLuint get_default_program();
+	bool relink(GLuint program);
 	void terminate();
 	~wire_shader_manager();
 };
