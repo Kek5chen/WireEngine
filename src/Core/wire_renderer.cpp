@@ -32,17 +32,18 @@ void wire_renderer::draw_triangle(vertex v1, vertex v2, vertex v3) {
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) (3 * sizeof(float)));
 	}
 	glUseProgram(shader_manager->get_default_program());
-	glClear(GL_COLOR_BUFFER_BIT);
 
 	vertex triangle[] = { v1, v2, v3 };
 	glBindBuffer(GL_ARRAY_BUFFER, triangle_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * 3, triangle, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * 3, &triangle, GL_DYNAMIC_DRAW);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void wire_renderer::next_frame() {
 	glfwSwapBuffers(((wire_window_internal *) parent)->gl_window);
+	glClear(GL_COLOR_BUFFER_BIT);
+
 	glfwPollEvents();
 }
 
