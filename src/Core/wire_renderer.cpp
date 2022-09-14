@@ -6,7 +6,6 @@ wire_renderer::wire_renderer(wire_window *parent) {
 	this->parent = parent;
 	this->shader_manager = new wire_shader_manager();
 }
-GLuint triangle_buffer = 0;
 
 void wire_renderer::initialize() {
 	glClearColor(0, 0, 0, 0);
@@ -22,25 +21,10 @@ void wire_renderer::initialize() {
 	glfwSwapInterval(0);
 }
 
-void wire_renderer::draw_triangle(vertex v1, vertex v2, vertex v3) {
-	if (!triangle_buffer) {
-		glGenBuffers(1, &triangle_buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, triangle_buffer);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) 0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) (3 * sizeof(float)));
-	}
-	glUseProgram(shader_manager->get_default_program());
-
-	vertex triangle[] = { v1, v2, v3 };
-	glBindBuffer(GL_ARRAY_BUFFER, triangle_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * 3, &triangle, GL_DYNAMIC_DRAW);
-
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-}
-
 void wire_renderer::next_frame() {
+	for(auto model : models)
+		model->draw();
+
 	glfwSwapBuffers(((wire_window_internal *) parent)->gl_window);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -48,9 +32,17 @@ void wire_renderer::next_frame() {
 }
 
 void wire_renderer::terminate() {
-	glDeleteBuffers(1, &triangle_buffer);
+	for(auto model : models)
+		delete model;
 }
 
 wire_renderer::~wire_renderer() {
 	terminate();
+}
+
+void wire_renderer::add_model(wire_model_base* model)
+{
+	if (!model->shader_program)
+		model->shader_program = shader_manager->get_default_program();
+	models.push_back(model);
 }

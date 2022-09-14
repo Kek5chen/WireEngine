@@ -2,7 +2,8 @@ add_library(WireEngine
         src/Core/wire_window.cpp
         src/Core/Internal/error_handling.cpp
         src/Core/wire_renderer.cpp
-        src/Core/wire_shader_manager.cpp)
+        src/Core/wire_shader_manager.cpp
+        src/Core/Models/objects_wire_models.cpp)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)

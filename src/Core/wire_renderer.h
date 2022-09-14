@@ -13,12 +13,13 @@ class wire_window;
 class wire_renderer {
 private:
 	wire_window *parent;
+	std::vector<wire_model_base*> models;
 public:
 	wire_shader_manager *shader_manager;
 
 	wire_renderer(wire_window *parent);
 	void initialize();
-	void draw_triangle(vertex v1, vertex v2, vertex v3);
+	void add_model(wire_model_base *model);
 	void next_frame();
 	void terminate();
 	~wire_renderer();
