@@ -41,7 +41,7 @@ public:
 	virtual ~wire_model_base();
 };
 
-class wire_triangle : private wire_model_base
+class wire_triangle : public wire_model_base
 {
 private:
 	vertex v[3];
